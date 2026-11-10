@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#174e3e">
+  <meta name="description" content="独立四川麻将练习工具：手牌分析、向听、听牌、换三张与定缺，支持安装和离线使用。">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+  <title>四川麻将智能助手 · 独立练习</title>
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">川</span><div><strong>四川麻将智能助手</strong><span>把每一手，练得更明白。</span></div></div>
+    <span id="connection" class="connection">本地练习</span>
+  </header>
+  <main>
+    <section class="intro"><div><p class="eyebrow">108 张牌 · 一桌好功夫</p><h1>想清楚，再出牌。</h1><p>看懂向听与进张，在自己的节奏里练习。</p></div><button id="install" class="light" hidden>安装到手机</button></section>
+    <nav class="tabs" aria-label="练习模式"><button id="tab-analysis" aria-selected="true" aria-controls="analysis-panel">手牌分析</button><button id="tab-simulator" aria-selected="false" aria-controls="simulator-panel">单人摸打</button></nav>
+    <section id="analysis-panel">
+      <div class="card"><div class="section-head"><div><p class="eyebrow">01 / 摆好手牌</p><h2>这手牌，怎么走？</h2></div><span id="hand-count" class="badge"></span></div>
+        <label class="inline-label">定缺<select id="missing"><option value="">尚未定缺（自动考虑缺一门）</option><option value="0">缺万</option><option value="1">缺筒</option><option value="2">缺条</option></select></label>
+        <div id="manual-hand" class="hand" aria-label="手牌，点击移除"></div>
+        <div class="toolbar"><button id="example" class="secondary">载入听牌示例</button><button id="clear" class="text-button">清空手牌</button></div>
+        <p class="hint">从下方点牌加入；点手牌移除。13 张看听牌，14 张看舍牌建议。</p>
+        <div id="tile-picker" class="picker" aria-label="可加入的牌"></div>
+        <details><summary>记录已见牌，估算剩余进张</summary><p class="hint">仅录入手牌以外的可见弃牌或公开牌。点下方牌增加，点记录移除。未录入的牌均视为未知。</p><div id="seen-picker" class="picker"></div><div id="seen-hand" class="hand small" aria-label="已见牌，点击移除"></div><button id="clear-seen" class="text-button">清空已见牌</button></details>
+      </div>
+      <div id="manual-result" class="card result" aria-live="polite"></div>
+    </section>
+    <section id="simulator-panel" hidden>
+      <div class="card"><div class="section-head"><div><p class="eyebrow">01 / 单人练习桌</p><h2 id="sim-title">先换三张，再定缺</h2></div><button id="new-game" class="secondary">重新发牌</button></div>
+        <ol class="steps" aria-label="练习阶段"><li id="step-exchange">1 换三张</li><li id="step-dingque">2 定缺</li><li id="step-play">3 摸打</li></ol>
+        <p id="sim-status" class="status" aria-live="polite"></p>
+        <div id="sim-hand" class="hand" aria-label="练习手牌"></div>
+        <div id="exchange-controls"><label class="inline-label">换牌方向<select id="direction"><option value="1">顺时针</option><option value="2">对家</option><option value="3">逆时针</option></select></label><div class="toolbar"><button id="exchange-hint" class="secondary">帮我选三张</button><button id="exchange">确认换三张</button></div><p class="hint">点选三张同花色牌。其余三手牌只参与换牌，不参与之后的摸打。</p></div>
+        <div id="dingque-controls" hidden><p>选定本局缺门，之后不可更改：</p><div class="toolbar"><button data-missing="0">缺万</button><button data-missing="1">缺筒</button><button data-missing="2">缺条</button></div></div>
+        <div id="play-controls" hidden><div class="toolbar"><button id="draw">摸一张</button><button id="auto" class="secondary">按建议走一步</button></div><p class="hint">摸牌后点手牌出牌。有缺门牌时必须先打缺；胡牌或牌墙耗尽结束。</p></div>
+        <p id="exchange-log" class="hint"></p><p id="wall-count" class="hint"></p>
+        <details open><summary>我的弃牌</summary><div id="sim-discards" class="hand small"></div></details>
+      </div>
+      <div id="sim-result" class="card result" aria-live="polite"></div>
+    </section>
+    <p id="notice" class="notice" role="status"></p>
+    <details class="card rules"><summary>规则与使用说明</summary><p>本版为独立、门清手牌练习：万／筒／条共 108 张，无字牌，普通胡为四组面子加一对将，或七对；未开杠的四张相同牌计两对。胡牌必须缺一门，定缺后不能包含缺门牌。</p><p>向听 −1 为胡牌、0 为听牌、1 为一向听。按合法胡牌的最少补牌数减一计算，包含清缺门的成本。剩余张数 = 4 − 手牌 − 已见牌，是未知牌上限，并非实际牌墙张数；为 0 的听牌标为“已见尽”。建议优先降低向听，再比较剩余进张，不计算番数或胜率。</p><p>换三张为四手牌同方向同时交换。之后是单人摸打练习，其他三手牌保持隐藏；不模拟四人血战、碰杠、计分或真人对局。分析仅支持完整 13／14 张暗手牌。</p><p>安卓 Chrome 首次联网打开后，可在菜单选择“添加到主屏幕／安装应用”。等待顶部显示“离线已就绪”，再断网使用。应用无账号、无外部脚本，手牌仅保存在本机。它不连接、不读取、不操作腾讯微乐。</p><button id="update" class="secondary" hidden>发现新版本，点击更新</button></details>
+    <footer>独立练习 · 数据留在本机 <span>四川麻将智能助手 / 1.0</span></footer>
+  </main>
+  <noscript>请启用 JavaScript 使用手牌分析与练习功能。</noscript>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
